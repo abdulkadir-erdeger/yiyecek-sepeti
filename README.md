@@ -15,7 +15,7 @@ To start Stripe server, first go to the server folder.
 $ cd server
 ```
 
-Run Serve.
+Run Server.
 
 ```sh
 $ npm start
