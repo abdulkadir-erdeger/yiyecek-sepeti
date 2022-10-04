@@ -1,51 +1,62 @@
 import { View, TextInput, Text, TouchableOpacity, Alert } from "react-native";
-import React, { useState } from "react";
-import {
-  CardField,
-  initPaymentSheet,
-  paymentIntent,
-  customAppearance,
-  confirmPayment,
-  useConfirmPayment,
-  useStripe,
-} from "@stripe/stripe-react-native";
+import React, { useState, useEffect } from "react";
+import { useStripe, CardField } from "@stripe/stripe-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 
-export default function PaymentScreen() {
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [adress, setAdress] = useState();
+export default function PaymentScreen({ route }) {
+  const amounts = route.params.value;
   const navigation = useNavigation();
 
-  /*const stripe = useStripe();
+  const LOCAL_URL =
+    Platform.OS === "android"
+      ? "http://10.0.2.2:4242/"
+      : "http://localhost:4242/";
 
-  const subscribe = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/pay", {
-        method: "POST",
-        body: JSON.stringify({ name }),
-        headers: {
-          "Context-Type": "application/json",
+  const { initPaymentSheet, createPaymentMethod } = useStripe();
+
+  const [key, setKey] = useState("");
+
+  const handleConfirmation = async () => {
+    const response = fetch(`${LOCAL_URL}create-payment-intent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: amounts,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setKey(res.clientSecret);
+        initPaymentSheet({ paymentIntentClientSecret: key });
+      })
+      .catch((e) => Alert.alert(e.message));
+    if (key) {
+      const billingDetails = {
+        email: "nickbey06@gmail.com",
+        phone: "+905050005500",
+        addressCity: "Ankara",
+        addressCountry: "TR",
+        addressLine1: "Atış Caddesi",
+        addressLine2: "Keçiören",
+        addressPostalCode: "06120",
+      };
+      const { paymentMethod, error } = await createPaymentMethod({
+        paymentMethodType: "Card",
+        paymentMethodData: {
+          billingDetails,
         },
       });
-      const data = await response.json();
-      if (!response.ok) return Alert.alert(data.message);
-      const clientSecret = data.clientSecret;
-      const initSheet = await stripe.initPaymentSheet({
-        paymentIntentClientSecret: clientSecret,
-      });
-      if (initSheet.error) return Alert.alert(initSheet.error.message);
-      const presentSheet = await stripe.presentPaymentSheet({
-        clientSecret,
-      });
-      if (presentSheet.error) return Alert.alert(presentSheet.error.message);
-      Alert.alert("Ödeme Tamamlandı");
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Try Again");
+
+      if (!error) {
+        Alert.alert("Alınan ödeme", `${amounts} TL Faturalandı.`);
+      } else {
+        Alert.alert("Error", error.message);
+      }
     }
-  };*/
+  };
 
   return (
     <View
@@ -66,47 +77,40 @@ export default function PaymentScreen() {
         </View>
       </View>
       <View className="flex-1 m-2">
-        <TextInput
-          autoCapitalize="none"
-          placeholder="E-mail"
-          keyboardType="email-address"
-          onChangeText={(text) => setName(text)}
-          className="bg-white pb-4 text-base rounded-sm mb-5"
-        />
-        <TextInput
-          autoCapitalize="none"
-          placeholder="Adress"
-          keyboardType="default"
-          onChange={(value) => setAdress(value.nativeEvent.text)}
-          className="bg-white pb-4 text-base rounded-sm"
-        />
-
-        <CardField
-          postalCodeEnabled={false}
-          placeholders={{
-            number: "4242 4242 4242 4242",
-          }}
-          cardStyle={{
-            backgroundColor: "#FFFFFF",
-            textColor: "#000000",
-          }}
-          style={{
-            width: "100%",
-            height: 50,
-            marginVertical: 20,
-          }}
-          onCardChange={(cardDetails) => {
-            console.log("cardDetails", cardDetails);
-          }}
-          onFocus={(focusedField) => {
-            console.log("focusField", focusedField);
-          }}
-        />
+        <View className="bg-[#fff]  rounded-lg  border-[#D3D3D3] border-4">
+          <TextInput
+            autoCapitalize="none"
+            placeholder="Adı Soyadı"
+            keyboardType="name-phone-pad"
+            className="h-20 font-semibold border-b-[#D3D3D3] border-b-2 ml-4 mr-4"
+          />
+          <CardField
+            postalCodeEnabled={false}
+            placeholders={{
+              number: "4242 4242 4242 4242",
+            }}
+            cardStyle={{
+              backgroundColor: "#FFFFFF",
+              textColor: "#000000",
+            }}
+            style={{
+              width: "100%",
+              height: 50,
+              marginVertical: 20,
+            }}
+            onCardChange={(cardDetails) => {
+              console.log("cardDetails", cardDetails);
+            }}
+            onFocus={(focusedField) => {
+              console.log("focusField", focusedField);
+            }}
+          />
+        </View>
       </View>
       <View className="p-5 bg-white mt-5 space-y-4">
         <TouchableOpacity
           className="rounded-lg bg-[#EA004B] p-4"
-          onPress={subscribe}
+          onPress={handleConfirmation}
         >
           <Text className="text-center text-white text-base font-bold">
             Ödeme Yap

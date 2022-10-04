@@ -105,7 +105,9 @@ export default function BasketScreen() {
           </View>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Payment")}
+            onPress={() =>
+              navigation.navigate("Payment", { value: basketTotal + 10 })
+            }
             className="rounded-lg bg-[#EA004B] p-4"
           >
             <Text className="text-center text-white text-base font-bold">

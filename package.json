@@ -15,7 +15,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@sanity/client": "^3.3.6",
     "@sanity/image-url": "^1.0.1",
-    "@stripe/stripe-react-native": "^0.18.1",
+    "@stripe/stripe-react-native": "0.13.1",
     "expo": "~46.0.9",
     "expo-status-bar": "~1.4.0",
     "nativewind": "^2.0.7",
