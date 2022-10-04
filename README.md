@@ -11,15 +11,22 @@ In this project, an online food ordering application was created. The data used 
 
 To start Stripe server, first go to the server folder.
 
-### `cd server`
+```sh
+$ cd server
+```
 
 Run Serve.
 
-### `npm start`
+```sh
+$ npm start
+```
 
 
-## Running the application
+## Running the Application
 
 To run the application, run the code below and select the operating system you want.
 
-### `expo start`
+```sh
+$ npm install
+$ expo start
+```
