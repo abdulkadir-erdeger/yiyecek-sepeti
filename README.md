@@ -1,7 +1,7 @@
 # Yiyecek Sepeti
 
 Project Application Screens:
-![alt text](https://www.linkpicture.com/q/Resim1_10.png "Yiyecek Sepeti")
+![alt text](https://lh3.googleusercontent.com/d/1BXY64Y-YsxfuM_9lttBut6GtVz_t3VVM "Yiyecek Sepeti")
 
 ## About the App
 
